@@ -52,15 +52,13 @@ loading Amazon Redshift is to use the COPY command (http://docs.aws.amazon.com/r
 
 Whatever the input, customers must run servers that look for new data on the file
 system, and manage the workflow of loading new data and dealing with any issues
-that might arise. That's why we created the AWS Lambda-based Amazon Redshift loader
-(http://github.com/awslabs/aws-lambda-redshift-loader) - it offers you the ability
-drop files into S3 and load them into any number of database tables in multiple
+that might arise. That's why we created this AWS Lambda-based Amazon Redshift loader. It offers you the ability drop files into S3 and load them into any number of database tables in multiple
 Amazon Redshift Clusters automatically - with no servers to maintain. This is possible
 because AWS Lambda (http://aws.amazon.com/lambda) provides an event-driven, zero-administration
 compute service. It allows developers to create applications that are automatically
 hosted and scaled, while providing you with a fine-grained pricing structure.
 
-![Loader Architecture](Architecture.png)
+![Loader Architecture](img/Architecture.png)
 
 The function maintains a list of all the files to be loaded from S3 into Amazon
 Redshift using a DynamoDB table. This list allows us to confirm that a file is loaded
@@ -86,7 +84,7 @@ This repository includes a CloudFormation template (deploy.yaml) which will crea
 
 This is a visual architecture of the CloudFormation installer:
 
-![Installer Architecture](cf_installer_architecture.png)
+![Installer Architecture](img/cf_installer_architecture.png)
 
 The intent of this template is to simplify the setup work necessary to configure the autoloader.  
 
@@ -102,21 +100,16 @@ The template requires four input parameters: availability zone, a security group
 
 __Usage Steps__
 
-1. Create a CloudFormation stack with the deploy.yaml file, or use the table of links below.  This stack will include everything needed
-   to set up the autoloader with two exceptions.  The KMS key must be created and managed separately.  
-   And a RedShift cluster will be required when setting up the autoloader.  Note that this stack does not 
-   configure the autoloader - this installs the components required to run the node setup script.
-2. Log in to the EC2 instance created as part of the stack.  It contains all the necessary components 
-   set up the autoloader.
-3. Invoke the setup.js script in the EC2 instance to begin configuring the autoloader.
+1. Create a CloudFormation stack with the deploy.yaml file, or use the table of links below.  This stack will include everything needed to set up the autoloader with two exceptions.  The KMS key must be created and managed separately, and a RedShift cluster will be required when setting up the autoloader.  Note that this stack does not configure the autoloader - it just installs the components required to run the node setup script.
+2. Log in to the EC2 instance created as part of the stack.  It contains all the necessary components set up the autoloader.
+3. Invoke the `setup.js` script on the created EC2 instance to begin configuring the autoloader.
 
 __Notes__
 
-1. This stack will create in the same region where you invoke the template.  
-2. The input parameters are not cross-checked at template creation time, so make sure that the subnet
-   choice matches the availability zone selected.
-3. The stack includes the Lambda trigger as well as the execution role - so they will be managed
-   as part of the stack.  It is expected that the EC2 instance and setup role can be used on an ongoing basis for the administration of the autoloader.
+1. This stack will be created in the same region where you invoke the template.  
+2. The input parameters are not cross-checked at template creation time, so make sure that the subnet   choice matches the availability zone you require.
+3. The stack creates the Lambda trigger as well as the execution role - so they will be managed
+as part of the stack. It is expected that the EC2 instance and setup role can be used on an ongoing basis for the administration of the autoloader.
    
 __Launch Links__
 
@@ -199,23 +192,23 @@ credentials to Redshift for the COPY command:
 
 | Region | Function Code S3 Location |
 | ------ | ---- |
-| eu-north-1 | [s3://awslabs-code-eu-north-1/LambdaRedshiftLoader/AWSLambdaRedshiftLoader-2.6.7.zip](https://s3.eu-north-1.amazonaws.com/awslabs-code-eu-north-1/LambdaRedshiftLoader/AWSLambdaRedshiftLoader-2.6.7.zip)
-| ap-south-1 | [s3://awslabs-code-ap-south-1/LambdaRedshiftLoader/AWSLambdaRedshiftLoader-2.6.7.zip](https://s3.ap-south-1.amazonaws.com/awslabs-code-ap-south-1/LambdaRedshiftLoader/AWSLambdaRedshiftLoader-2.6.7.zip)
-| eu-west-3 | [s3://awslabs-code-eu-west-3/LambdaRedshiftLoader/AWSLambdaRedshiftLoader-2.6.7.zip](https://s3.eu-west-3.amazonaws.com/awslabs-code-eu-west-3/LambdaRedshiftLoader/AWSLambdaRedshiftLoader-2.6.7.zip)
-| eu-west-2 | [s3://awslabs-code-eu-west-2/LambdaRedshiftLoader/AWSLambdaRedshiftLoader-2.6.7.zip](https://s3.eu-west-2.amazonaws.com/awslabs-code-eu-west-2/LambdaRedshiftLoader/AWSLambdaRedshiftLoader-2.6.7.zip)
-| eu-west-1 | [s3://awslabs-code-eu-west-1/LambdaRedshiftLoader/AWSLambdaRedshiftLoader-2.6.7.zip](https://s3.eu-west-1.amazonaws.com/awslabs-code-eu-west-1/LambdaRedshiftLoader/AWSLambdaRedshiftLoader-2.6.7.zip)
-| ap-northeast-3 | [s3://awslabs-code-ap-northeast-3/LambdaRedshiftLoader/AWSLambdaRedshiftLoader-2.6.7.zip](https://s3.ap-northeast-3.amazonaws.com/awslabs-code-ap-northeast-3/LambdaRedshiftLoader/AWSLambdaRedshiftLoader-2.6.7.zip)
-| ap-northeast-2 | [s3://awslabs-code-ap-northeast-2/LambdaRedshiftLoader/AWSLambdaRedshiftLoader-2.6.7.zip](https://s3.ap-northeast-2.amazonaws.com/awslabs-code-ap-northeast-2/LambdaRedshiftLoader/AWSLambdaRedshiftLoader-2.6.7.zip)
-| ap-northeast-1 | [s3://awslabs-code-ap-northeast-1/LambdaRedshiftLoader/AWSLambdaRedshiftLoader-2.6.7.zip](https://s3.ap-northeast-1.amazonaws.com/awslabs-code-ap-northeast-1/LambdaRedshiftLoader/AWSLambdaRedshiftLoader-2.6.7.zip)
-| sa-east-1 | [s3://awslabs-code-sa-east-1/LambdaRedshiftLoader/AWSLambdaRedshiftLoader-2.6.7.zip](https://s3.sa-east-1.amazonaws.com/awslabs-code-sa-east-1/LambdaRedshiftLoader/AWSLambdaRedshiftLoader-2.6.7.zip)
-| ca-central-1 | [s3://awslabs-code-ca-central-1/LambdaRedshiftLoader/AWSLambdaRedshiftLoader-2.6.7.zip](https://s3.ca-central-1.amazonaws.com/awslabs-code-ca-central-1/LambdaRedshiftLoader/AWSLambdaRedshiftLoader-2.6.7.zip)
-| ap-southeast-1 | [s3://awslabs-code-ap-southeast-1/LambdaRedshiftLoader/AWSLambdaRedshiftLoader-2.6.7.zip](https://s3.ap-southeast-1.amazonaws.com/awslabs-code-ap-southeast-1/LambdaRedshiftLoader/AWSLambdaRedshiftLoader-2.6.7.zip)
-| ap-southeast-2 | [s3://awslabs-code-ap-southeast-2/LambdaRedshiftLoader/AWSLambdaRedshiftLoader-2.6.7.zip](https://s3.ap-southeast-2.amazonaws.com/awslabs-code-ap-southeast-2/LambdaRedshiftLoader/AWSLambdaRedshiftLoader-2.6.7.zip)
-| eu-central-1 | [s3://awslabs-code-eu-central-1/LambdaRedshiftLoader/AWSLambdaRedshiftLoader-2.6.7.zip](https://s3.eu-central-1.amazonaws.com/awslabs-code-eu-central-1/LambdaRedshiftLoader/AWSLambdaRedshiftLoader-2.6.7.zip)
-| us-east-1 | [s3://awslabs-code-us-east-1/LambdaRedshiftLoader/AWSLambdaRedshiftLoader-2.6.7.zip](https://s3.amazonaws.com/awslabs-code-us-east-1/LambdaRedshiftLoader/AWSLambdaRedshiftLoader-2.6.7.zip)
-| us-east-2 | [s3://awslabs-code-us-east-2/LambdaRedshiftLoader/AWSLambdaRedshiftLoader-2.6.7.zip](https://s3.us-east-2.amazonaws.com/awslabs-code-us-east-2/LambdaRedshiftLoader/AWSLambdaRedshiftLoader-2.6.7.zip)
-| us-west-1 | [s3://awslabs-code-us-west-1/LambdaRedshiftLoader/AWSLambdaRedshiftLoader-2.6.7.zip](https://s3.us-west-1.amazonaws.com/awslabs-code-us-west-1/LambdaRedshiftLoader/AWSLambdaRedshiftLoader-2.6.7.zip)
-| us-west-2 | [s3://awslabs-code-us-west-2/LambdaRedshiftLoader/AWSLambdaRedshiftLoader-2.6.7.zip](https://s3.us-west-2.amazonaws.com/awslabs-code-us-west-2/LambdaRedshiftLoader/AWSLambdaRedshiftLoader-2.6.7.zip)
+| eu-north-1 | [s3://awslabs-code-eu-north-1/LambdaRedshiftLoader/AWSLambdaRedshiftLoader-2.6.8.zip](https://s3.eu-north-1.amazonaws.com/awslabs-code-eu-north-1/LambdaRedshiftLoader/AWSLambdaRedshiftLoader-2.6.8.zip)
+| ap-south-1 | [s3://awslabs-code-ap-south-1/LambdaRedshiftLoader/AWSLambdaRedshiftLoader-2.6.8.zip](https://s3.ap-south-1.amazonaws.com/awslabs-code-ap-south-1/LambdaRedshiftLoader/AWSLambdaRedshiftLoader-2.6.8.zip)
+| eu-west-3 | [s3://awslabs-code-eu-west-3/LambdaRedshiftLoader/AWSLambdaRedshiftLoader-2.6.8.zip](https://s3.eu-west-3.amazonaws.com/awslabs-code-eu-west-3/LambdaRedshiftLoader/AWSLambdaRedshiftLoader-2.6.8.zip)
+| eu-west-2 | [s3://awslabs-code-eu-west-2/LambdaRedshiftLoader/AWSLambdaRedshiftLoader-2.6.8.zip](https://s3.eu-west-2.amazonaws.com/awslabs-code-eu-west-2/LambdaRedshiftLoader/AWSLambdaRedshiftLoader-2.6.8.zip)
+| eu-west-1 | [s3://awslabs-code-eu-west-1/LambdaRedshiftLoader/AWSLambdaRedshiftLoader-2.6.8.zip](https://s3.eu-west-1.amazonaws.com/awslabs-code-eu-west-1/LambdaRedshiftLoader/AWSLambdaRedshiftLoader-2.6.8.zip)
+| ap-northeast-3 | [s3://awslabs-code-ap-northeast-3/LambdaRedshiftLoader/AWSLambdaRedshiftLoader-2.6.8.zip](https://s3.ap-northeast-3.amazonaws.com/awslabs-code-ap-northeast-3/LambdaRedshiftLoader/AWSLambdaRedshiftLoader-2.6.8.zip)
+| ap-northeast-2 | [s3://awslabs-code-ap-northeast-2/LambdaRedshiftLoader/AWSLambdaRedshiftLoader-2.6.8.zip](https://s3.ap-northeast-2.amazonaws.com/awslabs-code-ap-northeast-2/LambdaRedshiftLoader/AWSLambdaRedshiftLoader-2.6.8.zip)
+| ap-northeast-1 | [s3://awslabs-code-ap-northeast-1/LambdaRedshiftLoader/AWSLambdaRedshiftLoader-2.6.8.zip](https://s3.ap-northeast-1.amazonaws.com/awslabs-code-ap-northeast-1/LambdaRedshiftLoader/AWSLambdaRedshiftLoader-2.6.8.zip)
+| sa-east-1 | [s3://awslabs-code-sa-east-1/LambdaRedshiftLoader/AWSLambdaRedshiftLoader-2.6.8.zip](https://s3.sa-east-1.amazonaws.com/awslabs-code-sa-east-1/LambdaRedshiftLoader/AWSLambdaRedshiftLoader-2.6.8.zip)
+| ca-central-1 | [s3://awslabs-code-ca-central-1/LambdaRedshiftLoader/AWSLambdaRedshiftLoader-2.6.8.zip](https://s3.ca-central-1.amazonaws.com/awslabs-code-ca-central-1/LambdaRedshiftLoader/AWSLambdaRedshiftLoader-2.6.8.zip)
+| ap-southeast-1 | [s3://awslabs-code-ap-southeast-1/LambdaRedshiftLoader/AWSLambdaRedshiftLoader-2.6.8.zip](https://s3.ap-southeast-1.amazonaws.com/awslabs-code-ap-southeast-1/LambdaRedshiftLoader/AWSLambdaRedshiftLoader-2.6.8.zip)
+| ap-southeast-2 | [s3://awslabs-code-ap-southeast-2/LambdaRedshiftLoader/AWSLambdaRedshiftLoader-2.6.8.zip](https://s3.ap-southeast-2.amazonaws.com/awslabs-code-ap-southeast-2/LambdaRedshiftLoader/AWSLambdaRedshiftLoader-2.6.8.zip)
+| eu-central-1 | [s3://awslabs-code-eu-central-1/LambdaRedshiftLoader/AWSLambdaRedshiftLoader-2.6.8.zip](https://s3.eu-central-1.amazonaws.com/awslabs-code-eu-central-1/LambdaRedshiftLoader/AWSLambdaRedshiftLoader-2.6.8.zip)
+| us-east-1 | [s3://awslabs-code-us-east-1/LambdaRedshiftLoader/AWSLambdaRedshiftLoader-2.6.8.zip](https://s3.amazonaws.com/awslabs-code-us-east-1/LambdaRedshiftLoader/AWSLambdaRedshiftLoader-2.6.8.zip)
+| us-east-2 | [s3://awslabs-code-us-east-2/LambdaRedshiftLoader/AWSLambdaRedshiftLoader-2.6.8.zip](https://s3.us-east-2.amazonaws.com/awslabs-code-us-east-2/LambdaRedshiftLoader/AWSLambdaRedshiftLoader-2.6.8.zip)
+| us-west-1 | [s3://awslabs-code-us-west-1/LambdaRedshiftLoader/AWSLambdaRedshiftLoader-2.6.8.zip](https://s3.us-west-1.amazonaws.com/awslabs-code-us-west-1/LambdaRedshiftLoader/AWSLambdaRedshiftLoader-2.6.8.zip)
+| us-west-2 | [s3://awslabs-code-us-west-2/LambdaRedshiftLoader/AWSLambdaRedshiftLoader-2.6.8.zip](https://s3.us-west-2.amazonaws.com/awslabs-code-us-west-2/LambdaRedshiftLoader/AWSLambdaRedshiftLoader-2.6.8.zip)
 
 When you're done, you'll see that the AWS Lambda function is deployed and you
 can submit test events and view the CloudWatch Logging log streams.
@@ -265,20 +258,15 @@ instead of reading the values from the command line.
 All data used to manage the lifecycle of data loads is stored in DynamoDB, and
 the setup script automatically provisions the following tables:
 
-* LambdaRedshiftBatchLoadConfig - Stores the configuration of how files in an S3 input prefix should be loaded into Amazon Redshift.
-* LambdaRedshiftBatches - Stores the list of all historical and open batches that have been created. There will always be one open batch, and may be multiple closed batches per S3 input prefix from LambdaRedshiftBatchLoadConfig.
-* LambdaRedshiftProcessedFiles - Stores the list of all files entered into a batch, which is also used for deduplication of input files.
+* __LambdaRedshiftBatchLoadConfig__ - Stores the configuration of how files in an S3 input prefix should be loaded into Amazon Redshift.
+* __LambdaRedshiftBatches__ - Stores the list of all historical and open batches that have been created. There will always be one open batch, and may be multiple closed batches per S3 input prefix from LambdaRedshiftBatchLoadConfig.
+* __LambdaRedshiftProcessedFiles__ - Stores the list of all files entered into a batch, which is also used for deduplication of input files.
 
 Once the tables are configured, the setup script will automatically create an event source for the prefix you specified in S3, and start pushing `ObjectCreated:*` events to the database loader.
 
 *** IMPORTANT ***
-The tables used by this function are created with a max read & write per-second rate
-of 5. This means that you will be able to accommodate 5 concurrent file uploads
-per second being managed by ALL input locations which are event sources to this
-Lambda function. If you require more than 5 concurrent invocations/second, then
-you MUST increase the Read IOPS on the LambdaRedshiftBatchLoadConfig table, and
-the Write IOPS on LambdaRedshiftBatches and LambdaRedshiftProcessedFiles to the
-maximum number of files to be concurrently processed by all Configurations.
+
+The tables used by this function are created with `BillingMode: "PAY_PER_REQUEST"` (_from version 2.6.8_), which means that they will autoscale as needed to cope with the demand placed on them by the loader, which is a function of the frequency that files land in S3. If you have extremely peaky workloads where thousands of files arrive at the same time, but infrequently, then you may see Provisioned Throughput based Throttling of the function, and we would advise you move to Provisioned IO to meet your Peak Read/Write capacity requirements.
 
 ### The S3 Prefix
 
@@ -305,13 +293,15 @@ In some cases, you may want to have a configuration for most parts of a prefix, 
 
 ## Security
 
-The database password, as well as the a master symmetric key used for encryption
-will be encrypted by the [Amazon Key Management Service](https://aws.amazon.com/kms). This encryption is done with a KMS Customer Master Key with an alias named `alias/LambaRedshiftLoaderKey`.
-
 When the Redshift COPY command is created, by default the Lambda function will use a
 temporary STS token as credentials for Redshift to use when accessing S3. You can also optionally configure
-an Access Key and Secret Key which will be used instead, and
-the setup utility will encrypt the secret key.
+an Access Key and Secret Key which will be used instead, and the setup utility will encrypt the secret key.
+
+Redshift supports two options for connecting to the cluster: [IAM Role based authentication](https://docs.aws.amazon.com/redshift/latest/mgmt/generating-user-credentials.html), and Username/Password based authentication. While we highly recommend using IAM Role based authentication, it is not avialable with this utility as it requires the use of the [Redshift JDBC Driver](https://docs.aws.amazon.com/redshift/latest/mgmt/configure-jdbc-connection.html#download-jdbc-driver), which we don't yet support in this module.
+
+The database password, as well as the master symmetric key used for encryption operations, must be encrypted by the Amazon Key Management Service before running the setup utility. To perform this encryption, you will use the `encryptValue.js` script supplied with this project. The encryption is done with a KMS Customer Master Key with an alias named `alias/LambaRedshiftLoaderKey`. If you supply an unencrypted password to the setup scripts, they will store the value in Dynamodb (__BAD__), but these will not be usable by the system as it will throw a decryption error on execution.
+
+If you would like support for storage of passwords in the [SSM Parameter Store](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-paramstore.html), please [+1 this issue](https://github.com/awslabs/aws-lambda-redshift-loader/issues/178).
 
 ## Loading multiple Redshift clusters concurrently
 
@@ -441,7 +431,7 @@ The script takes an `operation type` and `filename` as arguments:
 
 An example of the processed files store can be seen below:
 
-![Processed Files Table](ProcessedFilesTable.png)
+![Processed Files Table](img/ProcessedFilesTable.png)
 
 ### Reprocessing a Batch
 
